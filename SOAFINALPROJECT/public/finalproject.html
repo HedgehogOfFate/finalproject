@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Post codes REST</title>
+    <style>
+        #map {
+            height: 715px;
+            width: 100%;
+        }
+    </style>
+</head>
+<body onload="initMap()">
+    <div id="map"></div>
+    <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyCUZC5ezZyNpQM39lKYDuvLUY2yQdRgC0o&callback=initMap" async defer></script>
+    <script>
+    function initMap() {
+        // Define the LatLng coordinates for the bounds of Šiauliai
+        var cityBounds = {
+          north: 55.9500,
+          south: 55.9167,
+          east: 23.3500,
+          west: 23.2833
+        };
+    
+        // Initialize the map centered on Šiauliai
+        var map = new google.maps.Map(document.getElementById('map'), {
+          center: { lat: 55.9333, lng: 23.3167 },
+          zoom: 13,
+          restriction: {
+            latLngBounds: cityBounds,
+            strictBounds: false
+          }
+        });
+    
+        // Add a click listener to the map
+        map.addListener('click', function(event) {
+          getPostalCode(event.latLng);
+        });
+      }
+    
+      function getPostalCode(latLng) {
+        var geocoder = new google.maps.Geocoder();
+    
+        geocoder.geocode({ 'location': latLng }, function(results, status) {
+          if (status === 'OK') {
+            if (results[0]) {
+              var postalCode = results[0].address_components.find(component => component.types.includes("postal_code"));
+              if (postalCode) {
+                alert('Post Code: ' + postalCode.long_name);
+              } else {
+                alert('Post code not found');
+              }
+            } else {
+              alert('No results found');
+            }
+          } else {
+            alert('Geocoder failed due to: ' + status);
+          }
+        });
+      }
+      </script>
+</body>
+</html>
